@@ -50,6 +50,29 @@ await page.waitForTimeout(6000);
 await expect(page.getByRole('heading', { name: 'Search Results:' })).toBeVisible();
 
 await expect(page.getByAltText('Profile Image')).toHaveCount(5);
+
+//Select option 10
+await page.getByPlaceholder('Select option').click();
+await page.getByText('10', { exact: true }).click();
+await expect(page.getByPlaceholder('Search for candidates...')).toBeVisible();
+await page.getByPlaceholder('Search for candidates...').fill('Spain');
+await searchButton.click();
+await expect(page.getByRole('heading', { name: 'Search Results:' })).toBeVisible();
+
+await expect(page.getByAltText('Profile Image')).toHaveCount(10);
+
+//Select option 50
+await page.getByPlaceholder('Select option').click();
+await page.getByText('50', { exact: true }).click();
+await expect(page.getByPlaceholder('Search for candidates...')).toBeVisible();
+await page.getByPlaceholder('Search for candidates...').fill('Spain');
+await searchButton.click();
 await page.waitForTimeout(6000);
+
+await expect(page.getByRole('heading', { name: 'Search Results:' })).toBeVisible();
+
+await expect(page.getByAltText('Profile Image')).toHaveCount(50);
+await page.waitForTimeout(6000);
+
 
 });
