@@ -74,5 +74,15 @@ await expect(page.getByRole('heading', { name: 'Search Results:' })).toBeVisible
 await expect(page.getByAltText('Profile Image')).toHaveCount(50);
 await page.waitForTimeout(6000);
 
+await expect(page.getByAltText('Profile Image')).toHaveCount(50);
+await page.waitForTimeout(6000);
+
+await expect(page.getByAltText('Profile Image')).toHaveCount(50);
+await page.waitForTimeout(6000);
+
+
+await expect(page.getByAltText('Profile Image')).toHaveCount(50);
+await page.waitForTimeout(6000);
+
 
 });
