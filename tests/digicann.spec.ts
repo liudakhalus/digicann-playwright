@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { waitForDebugger } from 'node:inspector';
+import { text } from 'node:stream/consumers';
 
 
 
@@ -434,10 +435,99 @@ test('Browser', async ({ page }) => {
   await frame.locator('.icon.menu').click();
   await frame.getByText('Message sequences', { exact: true }).click();
 
-  await expect(frame.getByText('Messaged by tester_two@chromane.com')).toBeVisible();
-  await page.waitForTimeout(4000);
+  expect(frame.locator('.toast')).toBeVisible();
+  expect(frame.getByText('Do Not Contact')).toBeVisible();
+  expect(frame.getByText('This profile has been messaged by a teammate and cannot be messaged again to avoid spamming the contact.')).toBeVisible();
+  expect(frame.locator('.close #mdi-close')).toBeVisible();
+  expect(frame.locator('.toast #mdi-fire-circle')).toBeVisible();
 
-  await page.pause()
+    expect(frame.getByText('Messaged by tester_two@chromane.com')).toBeVisible();
+
+  //Background color
+  expect(frame.locator('.profile-header')).toHaveCSS('background-color', 'rgb(255, 228, 230)');
+
+  // await page.pause()
+    await page.waitForTimeout(3000);
+});
+
+test('Mode assertion', async ({ page }) => {
+  await page.goto('https://digicann.chromane.com/app/auth_tester');
+  await page.waitForTimeout(1000);  await page.goto('https://digicann.chromane.com/app/auth_tester');
+  await page.waitForTimeout(1000);
+
+  //sign in as tester
+
+  await page.getByText('Sign in as Tester').click();
+  await page.waitForTimeout(1000);
+  await page.locator('input[data-qa="email"]').fill('tester_two@chromane.com');
+  await page.locator('input[data-qa="code"]').fill('NCEIQP5839XBVDJWIUE129404VNCM21');
+  await page.getByText('Save').click();
+  await page.waitForTimeout(1000);
+
+   await page.locator('a[href="/app/browser"]').click();
+    await page.waitForTimeout(3000);
+
+    const frame = page.frameLocator('.tab-sidepanel iframe');
+
+  await frame.getByText('Sign in as Tester').click();
+  await page.waitForTimeout(1000);
+  await frame.locator('input[data-qa="email"]').fill('tester_two@chromane.com');
+  await frame.locator('input[data-qa="code"]').fill('NCEIQP5839XBVDJWIUE129404VNCM21');
+  await frame.getByText('Save').click();
+
+
+const frameTabProfile = page.frameLocator('.tab-page iframe');
+
+  await expect(frameTabProfile.getByText('Annika Grüner')).toBeVisible();
+  await frameTabProfile.getByText('Annika Grüner').click();
+   await frame.locator('.icon.menu').click();
+  await frame.getByText('Message sequences', { exact: true }).click();
+
+const clientBtn = frame.getByText("Set mode 'Candidate'");
+const candidateBtn = frame.getByText("Set mode 'Client'");
+
+const clientMode = frame.getByText('Current mode: Client');
+const candidateMode = frame.getByText('Current mode: Candidate');
+
+const clientIcon = frame.locator('#mdi-bank');
+const candidateIcon = frame.locator('#mdi-contacts');
+
+const clientMessages = frame.getByText(/Messages sent today in Client mode/i);
+const candidateMessages = frame.getByText(/Messages sent today in Candidate mode/i);
+
+
+const isClient = await clientMode.isVisible().catch(() => false);
+const isCandidate = await candidateMode.isVisible().catch(() => false);
+
+if (isClient) {
+
+  await expect(clientMode).toBeVisible();
+  await expect(clientIcon).toBeVisible();
+  await expect(clientMessages).toBeVisible();
+
+  await clientBtn.waitFor();
+  await clientBtn.click();
+
+  await expect(candidateMode).toBeVisible();
+  await expect(candidateIcon).toBeVisible();
+}
+
+
+if (isCandidate) {
+
+  await expect(candidateMode).toBeVisible();
+  await expect(candidateIcon).toBeVisible();
+  await expect(candidateMessages).toBeVisible();
+
+  await candidateBtn.waitFor();
+  await candidateBtn.click();
+
+  await expect(clientMode).toBeVisible();
+  await expect(clientIcon).toBeVisible();
+}
+
+  await page.waitForTimeout(3000);
+
 
 });
 
@@ -618,6 +708,8 @@ await frame.locator('.icon.menu').click();
 await frame.getByText('Admin prompts').click();
 
 expect(frame.getByText('Prompts', { exact: true })).toBeVisible();
+await frame.locator('#mdi-information-outline').nth(0).hover()
+expect(frame.getByText('List of prompts.')).toBeVisible();
 expect(frame.getByRole('button', { name: 'Refresh' })).toBeVisible();
 expect(frame.getByRole('button', { name: 'New Item' })).toBeVisible();
 
@@ -728,17 +820,53 @@ const frameTabProfile = page.frameLocator('.tab-page iframe');
 
   await expect(frameTabProfile.getByText('Annika Grüner')).toBeVisible();
   await frameTabProfile.getByText('Annika Grüner').click();
+  await frame.locator('.icon.menu').click();
+  await frame.getByText('Message sequences', { exact: true }).click();
 
-//  information-outline
-await frame.locator('.icon.menu').click();
-await frame.getByText('Admin prompts').click();
+const clientBtn = frame.getByText("Set mode 'Candidate'");
+const candidateBtn = frame.getByText("Set mode 'Client'");
 
-expect(frame.getByText('Prompts', { exact: true })).toBeVisible();
+const clientMode = frame.getByText('Current mode: Client');
+const candidateMode = frame.getByText('Current mode: Candidate');
 
-await frame.locator('#mdi-information-outline').nth(0).hover()
-expect(frame.getByText('List of prompts.')).toBeVisible();
+const clientIcon = frame.locator('#mdi-bank');
+const candidateIcon = frame.locator('#mdi-contacts');
 
-    await page.waitForTimeout(3000);
+const clientMessages = frame.getByText(/Messages sent today in Client mode/i);
+const candidateMessages = frame.getByText(/Messages sent today in Candidate mode/i);
+
+
+const isClient = await clientMode.isVisible().catch(() => false);
+const isCandidate = await candidateMode.isVisible().catch(() => false);
+
+if (isClient) {
+
+  await expect(clientMode).toBeVisible();
+  await expect(clientIcon).toBeVisible();
+  await expect(clientMessages).toBeVisible();
+
+  await clientBtn.waitFor();
+  await clientBtn.click();
+
+  await expect(candidateMode).toBeVisible();
+  await expect(candidateIcon).toBeVisible();
+}
+
+
+if (isCandidate) {
+
+  await expect(candidateMode).toBeVisible();
+  await expect(candidateIcon).toBeVisible();
+  await expect(candidateMessages).toBeVisible();
+
+  await candidateBtn.waitFor();
+  await candidateBtn.click();
+
+  await expect(clientMode).toBeVisible();
+  await expect(clientIcon).toBeVisible();
+}
+
+  await page.waitForTimeout(3000);
 
 
 });
