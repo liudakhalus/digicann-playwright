@@ -366,6 +366,9 @@ expect(page.getByText('Team name')).toBeVisible();
 expect(page.getByText('Usage mode')).toBeVisible();
 expect(page.getByText('Smartlead Campaign ID')).toBeVisible();
 
+//Log out
+expect(page.locator('a[href="/app/log_out"]')).toBeVisible();
+
 });
 
 test('Browser', async ({ page }) => {
@@ -406,7 +409,7 @@ test('Browser', async ({ page }) => {
 
   const frameTabProfile = page.frameLocator('.tab-page iframe');
 
-  await expect(frameTabProfile.getByText('Vlas Bashynskyi')).toBeVisible();
+  await expect(frameTabProfile.getByText('Annika Grüner')).toBeVisible();
   await frameTabProfile.getByText('Annika Grüner').click();
 
   await frame.locator('.icon.menu').click();
@@ -434,13 +437,12 @@ test('Browser', async ({ page }) => {
   await expect(frame.getByText('Messaged by tester_two@chromane.com')).toBeVisible();
   await page.waitForTimeout(4000);
 
-//Log out
-expect(page.locator('a[href="/app/log_out"]')).toBeVisible();
+  await page.pause()
 
 });
 
-test('for tests ', async ({ page }) => {
-  await page.goto('https://digicann.chromane.com/app/auth_tester');
+test('browser assertions', async ({ page }) => {
+ await page.goto('https://digicann.chromane.com/app/auth_tester');
   await page.waitForTimeout(1000);
 
   //sign in as tester
@@ -452,10 +454,291 @@ test('for tests ', async ({ page }) => {
   await page.getByText('Save').click();
   await page.waitForTimeout(1000);
 
+  await page.locator('a[href="/app/browser"]').click();
+    await page.waitForTimeout(3000);
+
+    const frame = page.frameLocator('.tab-sidepanel iframe');
+
+  await frame.getByText('Sign in as Tester').click();
+  await page.waitForTimeout(1000);
+  await frame.locator('input[data-qa="email"]').fill('tester_two@chromane.com');
+  await frame.locator('input[data-qa="code"]').fill('NCEIQP5839XBVDJWIUE129404VNCM21');
+  await frame.getByText('Save').click();
 
 
+const frameTabProfile = page.frameLocator('.tab-page iframe');
+
+  await expect(frameTabProfile.getByText('Annika Grüner')).toBeVisible();
+  await frameTabProfile.getByText('Annika Grüner').click();
+// My account
+
+expect(frame.getByText('My Account', { exact: true })).toBeVisible();
+expect(frame.getByText('In this section you can see information about your account and your usage statistics.')).toBeVisible();
+
+ await expect(frame.locator('.name-value-cont')).toBeVisible();
+
+  await expect(frame.locator('.name-value .name').nth(0)).toHaveText('Email: ');
+  // await expect(page.locator('.name-value .value').nth(0)).toHaveText('tester@chromane.com');
+
+   await expect(frame.locator('.name-value .name').nth(1)).toHaveText('Unlocked: ');
+  await expect(frame.locator('.name-value .value').nth(1)).toHaveText('true');
+
+  await expect(frame.locator('.name-value .name').nth(2)).toHaveText('Roles: ');
+  await expect(frame.locator('.name-value .value').nth(2)).toHaveText('user, admin, tester');
+
+  await expect(frame.locator('.name-value .name').nth(3)).toHaveText('Tags: ');
+  await expect(frame.locator('.name-value .value').nth(3)).toHaveText('unlocked, unlocked_all_features, tester');
+
+  expect(frame.getByText('Delete Account', { exact: true })).toBeVisible();
+  expect(frame.getByText('Use this section to delete your account and all information, associated with it from our servers.', { exact: true })).toBeVisible();
+  expect(frame.getByRole('button', { name: 'Delete account' })).toBeVisible();
+
+  //Main page
+    await frame.locator('.icon.menu').click();
+
+  await frame.locator('#mdi-home').click();
+
+  expect(frame.locator('.headline')).toHaveText('Mock Sidepanel');
+  expect(frame.locator('.body')).toHaveText('Mock Sidepanel');
+  expect(frame.getByRole('button', { name: 'Sign in as Tester'})).toBeVisible();
+
+      await page.waitForTimeout(3000);
 
 
+  //Email finder
+
+  await frame.locator('.icon.menu').click();
+
+  await frame.locator('#mdi-at').click();
+    expect(frame.locator('.headline')).toHaveText('Email Finder');
+  expect(frame.locator('.body')).toHaveText("Navigate to a profile page in LinkedIn Recruiter, click on 'Add email' and the extension will automatically find and fill in the email address if possible.");
+      await page.waitForTimeout(3000);
+      //Message sequences
+  await frame.locator('.icon.menu').click();
+
+  await frame.locator('#mdi-message-text-clock').click();
+
+  expect(frame.getByText('Current mode:')).toBeVisible();
+  expect(frame.locator('#mdi-bank')).toBeVisible();
+  expect(frame.getByText('Client', { exact: true })).toBeVisible();
+  expect(frame.locator('.micro-button')).toHaveText("Set mode 'Candidate'");
+  expect(frame.locator('.profile-header')).toBeVisible();
+    await page.waitForTimeout(3000);
+
+
+//buttons
+expect(frame.getByRole('button', { name: 'Reload profile data' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Generate sequence' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Reveal verifiend email and Start Email Campaign' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Mark contact as messaged' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Mark contact as replied' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'DND (Do Not Contact)' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Clear profile' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Mark profile as messaged by Vlas 89 days ago' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Mark profile as messaged by Vlas 91 days ago' })).toBeVisible();
+//Employees
+await expect(frame.getByText('Employees of')).toBeVisible();
+await expect(frame.getByAltText('Profile Image').nth(1)).toBeVisible();
+//Message sequence settings
+
+await frame.locator('.icon.menu').click();
+await frame.locator('#mdi-message-cog').click();
+await page.waitForTimeout(1000);
+
+// expect(frame.getByTitle('Message sequence settings')).toBeVisible();
+expect(frame.getByText(' Please provide a prompt for generating a message sequence below. Also please provide an example of a sequence of messages that will be used for training the model. ')).toBeVisible();
+expect(frame.getByRole('button', { name: 'Save' }).nth(0)).toBeVisible();
+expect(frame.locator('.current-user-contacts textarea')).toBeVisible();
+
+expect(frame.getByRole('button', { name: 'Example sequence 1' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Example sequence 2' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Test sequence generation' })).toBeVisible();
+
+expect(frame.getByText('Example profile summary:', { exact: true }).nth(0)).toBeVisible();
+expect(frame.locator('textarea.textarea-profile-summary').nth(0)).toBeVisible();
+
+expect(frame.getByText('Example message sequence:', { exact: true }).nth(0)).toBeVisible();
+expect(frame.getByText('# Day 0 - LinkedIn Inmail 1', {exact: true}).nth(0)).toBeVisible();
+
+// Buttons Variation 
+
+expect(frame.getByRole('button', { name: 'Variation A' }).nth(0)).toBeVisible();
+expect(frame.getByRole('button', { name: 'Variation B' }).nth(0)).toBeVisible();
+expect(frame.getByRole('button', { name: 'Variation C' }).nth(0)).toBeVisible();
+expect(frame.getByRole('button', { name: 'Variation D' }).nth(0)).toBeVisible();
+
+//Example message sequence:
+expect(frame.getByText('Subject:', { exact: true }).nth(0)).toBeVisible();
+expect(frame.locator('.variation textarea').nth(0)).toBeVisible();
+expect(frame.getByText('Body:', { exact: true }).nth(0)).toBeVisible();
+expect(frame.locator('.variation textarea').nth(1)).toBeVisible();
+
+expect(frame.getByRole('button', { name: 'Save' }).nth(1)).toBeVisible();
+
+//Follow-up list 
+await frame.locator('.icon.menu').click();
+await frame.locator('#mdi-format-list-bulleted').click();
+expect(frame.getByText('Your follow-up list', {exact: true})).toBeVisible();
+expect(frame.getByText('Follow-up list for user')).toBeVisible();
+
+expect(frame.getByRole('button', { name: 'Refresh' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Clear all follow-up messages' })).toBeVisible();
+
+//Settings
+await frame.locator('.icon.menu').click();
+await frame.locator('#mdi-cog').click();
+expect(frame.getByText('Settings').nth(0)).toBeVisible();
+expect(frame.getByText('On this page you can update default settings and customize the extension to your needs.')).toBeVisible();
+expect(frame.getByText('Mode selector', { exact: true })).toBeVisible();  
+expect(frame.getByText('Please choose how you intend to use the application to get started. You can always change this later in the settings.')).toBeVisible();
+
+expect(frame.getByRole('heading', { name: 'Candidate mode' })).toBeVisible();
+expect(frame.getByText('Use the app to find candidates and manage your candidate interactions.')).toBeVisible();
+expect(frame.getByRole('heading', { name: 'Client mode' })).toBeVisible();
+expect(frame.getByText('Use the app to generate outreach messages and manage client interactions.')).toBeVisible();
+
+expect(frame.getByText('Team selector', { exact: true })).toBeVisible();  
+expect(frame.getByText('Please choose your team to get started. You can always change this later in the settings.')).toBeVisible();
+expect(frame.getByRole('heading', { name: 'Leamington' })).toBeVisible();
+expect(frame.getByText('Leamington.', { exact: true })).toBeVisible();
+expect(frame.getByRole('heading', { name: 'Manchester' })).toBeVisible();
+expect(frame.getByText('Manchester.', { exact: true })).toBeVisible();
+//Message generator (old) and Testing
+
+await frame.locator('.icon.menu').click();
+await frame.locator('#mdi-script-text').click();
+await frame.locator('.icon.menu').click();
+await frame.locator('#mdi-flask-outline').click();
+
+expect(frame.getByRole('button', { name: 'download_page_html' })).toBeVisible();
+
+//Admin prompts
+
+await frame.locator('.icon.menu').click();
+await frame.getByText('Admin prompts').click();
+
+expect(frame.getByText('Prompts', { exact: true })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Refresh' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'New Item' })).toBeVisible();
+
+expect(frame.getByText('Name')).toBeVisible();
+expect(frame.getByText('User email')).toBeVisible();
+expect(frame.getByText('Description')).toBeVisible();
+expect(frame.getByText('Prompt text')).toBeVisible();
+await page.waitForTimeout(1000);
+
+//Edit button
+
+const firstRow = frame.locator('.row').nth(1);
+// await firstRow.scrollIntoViewIfNeeded();
+
+const box = await firstRow.boundingBox();
+
+if (box) {
+  await page.mouse.move(
+    box.x + 10,
+    box.y + box.height / 2
+  );
+}
+await frame.locator('.row-action-items #mdi-pencil').nth(0).click();
+await page.waitForTimeout(1000);
+
+expect(frame.getByRole('heading', { name: 'Edit item' })).toBeVisible();
+expect(frame.locator('#mdi-close')).toBeVisible();
+expect(frame.getByRole('textbox', { name: 'Description' })).toBeVisible();
+expect(frame.locator('textarea[data-qa="description"]')).toBeVisible();
+expect(frame.getByRole('textbox', { name: 'Prompt text' })).toBeVisible();
+expect(frame.locator('textarea[data-qa="prompt_text"]')).toBeVisible();
+expect(frame.getByRole('button', { name: 'Save' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Cancel' })).toBeVisible();
+
+await frame.locator('#mdi-close').click();
+
+//Delete button
+
+if(box) {
+  await page.mouse.move(
+    box.x + 10,
+    box.y + box.height / 2
+  );
+}
+
+await frame.locator('.row-action-items #mdi-delete').nth(0).click();
+await page.waitForTimeout(1000);
+// await page.pause();
+
+expect(frame.locator('.page-confirm__title')).toHaveText('Deleting item');
+expect(frame.locator('.page-confirm__subtitle')).toHaveText('Are you sure you want to delete this row? This action cannot be undone.');
+expect(frame.getByRole('button', { name: 'Delete' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'Cancel' })).toBeVisible();
+
+await frame.getByRole('button', { name: 'Cancel' }).click();
+
+//My prompts
+
+await frame.locator('.icon.menu').click();
+await frame.getByText('My prompts').click();
+
+expect(frame.getByText('My prompts', { exact: true }).nth(0)).toBeVisible();
+await frame.locator('#mdi-information-outline').nth(0).hover()
+expect(frame.getByText('List of your personal prompts')).toBeVisible();
+
+expect(frame.getByRole('button', { name: 'Refresh' })).toBeVisible();
+expect(frame.getByRole('button', { name: 'New Item' })).toBeVisible();
+
+expect(frame.getByText('Name')).toBeVisible();
+expect(frame.getByText('Description')).toBeVisible();
+expect(frame.getByText('Prompt text')).toBeVisible();
+
+
+//Log out
+await frame.locator('.icon.menu').click();
+expect(frame.locator('#mdi-logout-variant')).toBeVisible();
+await page.waitForTimeout(3000);
+
+
+});
+
+test('for tests ', async ({ page }) => {
+await page.goto('https://digicann.chromane.com/app/auth_tester');
+  await page.waitForTimeout(1000);
+
+  //sign in as tester
+
+  await page.getByText('Sign in as Tester').click();
+  await page.waitForTimeout(1000);
+  await page.locator('input[data-qa="email"]').fill('tester_two@chromane.com');
+  await page.locator('input[data-qa="code"]').fill('NCEIQP5839XBVDJWIUE129404VNCM21');
+  await page.getByText('Save').click();
+  await page.waitForTimeout(1000);
+
+  await page.locator('a[href="/app/browser"]').click();
+    await page.waitForTimeout(3000);
+
+    const frame = page.frameLocator('.tab-sidepanel iframe');
+
+  await frame.getByText('Sign in as Tester').click();
+  await page.waitForTimeout(1000);
+  await frame.locator('input[data-qa="email"]').fill('tester_two@chromane.com');
+  await frame.locator('input[data-qa="code"]').fill('NCEIQP5839XBVDJWIUE129404VNCM21');
+  await frame.getByText('Save').click();
+
+
+const frameTabProfile = page.frameLocator('.tab-page iframe');
+
+  await expect(frameTabProfile.getByText('Annika Grüner')).toBeVisible();
+  await frameTabProfile.getByText('Annika Grüner').click();
+
+//  information-outline
+await frame.locator('.icon.menu').click();
+await frame.getByText('Admin prompts').click();
+
+expect(frame.getByText('Prompts', { exact: true })).toBeVisible();
+
+await frame.locator('#mdi-information-outline').nth(0).hover()
+expect(frame.getByText('List of prompts.')).toBeVisible();
+
+    await page.waitForTimeout(3000);
 
 
 });
